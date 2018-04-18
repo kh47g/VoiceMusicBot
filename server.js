@@ -50,6 +50,8 @@ let apiTelegram = function(method, dataStr) {
 		},
 	};
 
+	console.log(httpsOptions); // XXX
+
 	return (new Promise((resolve, reject) => {
 		let req = https.request(httpsOptions, res => {
 			parseBody(res).then(body => resolve(body));
@@ -72,26 +74,20 @@ let onCommand = function(telegramMessageStr) {
 	if (message.hasOwnProperty("text") && message.text === "/start") {
 		console.log("1:"); // XXX
 		apiTelegram("sendMessage", JSON.stringify({
-			"message": {
-				"chat_id": message.from.id,
-				"text": HI_MSG,
-			},
+			"chat_id": message.from.id,
+			"text": HI_MSG,
 		})).then(console.log); // XXX
 	} else if (message.hasOwnProperty("audio")) {
 		console.log("2:"); // XXX
 		apiTelegram("sendVoice", JSON.stringify({
-			"message": {
-				"chat_id": message.from.id,
-				"voice": message.audio.file_id,
-			},
+			"chat_id": message.from.id,
+			"voice": message.audio.file_id,
 		})).then(console.log); // XXX
 	} else {
 		console.log("3:"); // XXX
 		apiTelegram("sendMessage", JSON.stringify({
-			"message": {
-				"chat_id": message.from.id,
-				"text": IDK_MSG,
-			},
+			"chat_id": message.from.id,
+			"text": IDK_MSG,
 		})).then(console.log); // XXX
 	}
 }
@@ -116,12 +112,10 @@ let onRequest = function(req, res) {
 		return;
 	}
 
-	parseBody(req).then(body => {
-		console.log(body);
-		onCommand(body);
-		res.statusCode = 200;
-		res.end();
-	});
+	parseBody(req).then(onCommand);
+
+	res.statusCode = 200;
+	res.end();
 }
 
 
