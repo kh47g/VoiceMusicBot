@@ -52,7 +52,7 @@ let apiTelegram = function(method, dataStr) {
 
 	return (new Promise((resolve, reject) => {
 		let req = https.request(httpsOptions, res => {
-			parseBody(res).then(resolve);
+			parseBody(res).then(body => resolve(body));
 		});
 
 		req.on("error", err => reject("ERROR:\n" + err));
@@ -116,7 +116,7 @@ let onRequest = function(req, res) {
 		return;
 	}
 
-	parseBody(req).then(resolve => {
+	parseBody(req).then(body => {
 		console.log(body);
 		onCommand(body);
 		res.statusCode = 200;
