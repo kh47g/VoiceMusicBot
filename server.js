@@ -18,12 +18,12 @@ let url = require("url");
 
 
 let parseBody = function(req) {
-	return new Promise((reject, resolve) => {
+	return new Promise((resolve, reject) => {
 		let body = [];
 
-		req.on('data', (chunk) => {
+		req.on("data", (chunk) => {
 			body.push(chunk);
-		}).on('end', () => {
+		}).on("end", () => {
 			resolve(Buffer.concat(body).toString());
 		});
 	});
@@ -51,6 +51,9 @@ let onRequest = function(req, res) {
 	parseBody(req).then(body => {
 		console.log(body);
 	});
+
+	res.statusCode = 200;
+	res.end();
 }
 
 
