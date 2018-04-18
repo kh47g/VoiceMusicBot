@@ -59,7 +59,7 @@ let apiTelegram = function(method, dataStr) {
 
 		req.write(dataStr);
 		req.end();
-	})).catch(err => console.log(err));
+	})).catch(err => console.log(err)); // XXX
 
 }
 
@@ -67,27 +67,32 @@ let apiTelegram = function(method, dataStr) {
 let onCommand = function(telegramMessageStr) {
 	let { message } = JSON.parse(telegramMessageStr);
 
+	console.log(message); // XXX
+
 	if (message.hasOwnProperty("text") && message.text === "/start") {
+		console.log("1:"); // XXX
 		apiTelegram("sendMessage", JSON.stringify({
 			"message": {
 				"chat_id": message.from.id,
 				"text": HI_MSG,
 			},
-		}));
+		})).then(console.log); // XXX
 	} else if (message.hasOwnProperty("audio")) {
+		console.log("2:"); // XXX
 		apiTelegram("sendVoice", JSON.stringify({
 			"message": {
 				"chat_id": message.from.id,
 				"voice": message.audio.file_id,
 			},
-		}));
+		})).then(console.log); // XXX
 	} else {
+		console.log("3:"); // XXX
 		apiTelegram("sendMessage", JSON.stringify({
 			"message": {
 				"chat_id": message.from.id,
 				"text": IDK_MSG,
 			},
-		}));
+		})).then(console.log); // XXX
 	}
 }
 
