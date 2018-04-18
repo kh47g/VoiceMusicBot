@@ -112,10 +112,12 @@ let onRequest = function(req, res) {
 		return;
 	}
 
-	parseBody(req).then(onCommand);
+	parseBody(req).then(body => {
+		onCommand(body)
 
-	res.statusCode = 200;
-	res.end();
+		res.statusCode = 200;
+		res.end();
+	});
 }
 
 
