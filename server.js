@@ -51,6 +51,7 @@ let apiTelegram = function(method, dataStr) {
 	};
 
 	console.log(httpsOptions); // XXX
+	console.log(dataStr); // XXX
 
 	return (new Promise((resolve, reject) => {
 		let req = https.request(httpsOptions, res => {
