@@ -82,12 +82,13 @@ let onCommand = function(telegramMessageStr) {
 		console.log("2:"); // XXX
 		apiTelegram("sendVoice", JSON.stringify({
 			"chat_id": message.chat.id,
-			"voice": {
+			"voice": message.audio.file_id,
+			/*"voice": {
 				"duration": message.audio.duration,
 				"mime_type": message.audio.mime_type,
 				"file_id": message.audio.file_id,
 				"file_size": message.audio.file_size,
-			},
+			},*/
 		})).then(console.log); // XXX
 	} else {
 		console.log("3:"); // XXX
