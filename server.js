@@ -10,23 +10,85 @@ const PORT = process.env.PORT || 9989;
 
 const BOT_TOKEN = "/" + process.env.BOT_TOKEN;
 
+const GUIDE_MSG = "Send me audio file and\n" +
+	"I'll send you voice message back!";
+
+const HI_MSG = "Hi, nice to meet you!\n" + GUIDE_MSG;
+
+const IDK_MSG = "I don't understand you!\n" + GUIDE_MSG;
+
 
 
 let http = require("http");
+let https = require("https");
 let url = require("url");
 
 
 
-let parseBody = function(req) {
+let parseBody = function(cont) {
 	return new Promise((resolve, reject) => {
 		let body = [];
 
-		req.on("data", (chunk) => {
+		cont.on("data", (chunk) => {
 			body.push(chunk);
 		}).on("end", () => {
 			resolve(Buffer.concat(body).toString());
 		});
 	});
+}
+
+
+let apiTelegram = function(method, dataStr) {
+	let httpsOptions = {
+		hostname: "api.telegram.org",
+		port: 443,
+		path: `/bot${BOT_TOKEN}/${method}`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"Content-Length": Buffer.byteLength(dataStr)
+		},
+	};
+
+	return (new Promise((resolve, reject) => {
+		let req = https.request(httpsOptions, res => {
+			parseBody(res).then(resolve);
+		});
+
+		req.on("error", err => reject("ERROR:\n" + err));
+
+		req.write(dataStr);
+		req.end();
+	})).catch(err => console.log(err));
+
+}
+
+
+let onCommand = function(telegramMessageStr) {
+	let { message } = JSON.parse(telegramMessageStr);
+
+	if (message.hasOwnProperty("text") && message.text === "/start") {
+		apiTelegram("sendMessage", JSON.stringify({
+			"message": {
+				"chat_id": message.from.id,
+				"text": HI_MSG,
+			},
+		}));
+	} else if (message.hasOwnProperty("audio")) {
+		apiTelegram("sendVoice", JSON.stringify({
+			"message": {
+				"chat_id": message.from.id,
+				"voice": message.audio.file_id,
+			},
+		}));
+	} else {
+		apiTelegram("sendMessage", JSON.stringify({
+			"message": {
+				"chat_id": message.from.id,
+				"text": IDK_MSG,
+			},
+		}));
+	}
 }
 
 
@@ -41,6 +103,7 @@ let onRequest = function(req, res) {
 
 	let pathname = url.parse(req.url).pathname;
 
+	// telegram sends request to host/<BOT_TOKEN>
 	if (!pathname.startsWith(BOT_TOKEN)) {
 		console.log("Non-Telegram request")
 		console.log(`${req.method} ${req.url} HTTP/${req.httpVersion}`);
@@ -48,9 +111,7 @@ let onRequest = function(req, res) {
 		return;
 	}
 
-	parseBody(req).then(body => {
-		console.log(body);
-	});
+	parseBody(req).then(onCommand);
 
 	res.statusCode = 200;
 	res.end();
