@@ -8,7 +8,7 @@ if (!process.env.BOT_TOKEN) throw new Error("BOT_TOKEN is undefined!");
 
 const PORT = process.env.PORT || 9989;
 
-const BOT_TOKEN = "/" + process.env.BOT_TOKEN;
+const BOT_TOKEN = process.env.BOT_TOKEN;
 
 const GUIDE_MSG = "Send me audio file and\n" +
 	"I'll send you voice message back!";
@@ -104,7 +104,7 @@ let onRequest = function(req, res) {
 	let pathname = url.parse(req.url).pathname;
 
 	// telegram sends request to host/<BOT_TOKEN>
-	if (!pathname.startsWith(BOT_TOKEN)) {
+	if (!pathname.startsWith("/" + BOT_TOKEN)) {
 		console.log("Non-Telegram request")
 		console.log(`${req.method} ${req.url} HTTP/${req.httpVersion}`);
 		res.end();
