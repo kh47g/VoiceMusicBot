@@ -116,10 +116,12 @@ let onRequest = function(req, res) {
 		return;
 	}
 
-	parseBody(req).then(onCommand);
-
-	res.statusCode = 200;
-	res.end();
+	parseBody(req).then(resolve => {
+		console.log(body);
+		onCommand(body);
+		res.statusCode = 200;
+		res.end();
+	});
 }
 
 
