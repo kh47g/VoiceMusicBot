@@ -74,19 +74,24 @@ let onCommand = function(telegramMessageStr) {
 	if (message.hasOwnProperty("text") && message.text === "/start") {
 		console.log("1:"); // XXX
 		apiTelegram("sendMessage", JSON.stringify({
-			"chat_id": message.from.id,
+			"chat_id": message.chat.id,
 			"text": HI_MSG,
 		})).then(console.log); // XXX
 	} else if (message.hasOwnProperty("audio")) {
 		console.log("2:"); // XXX
 		apiTelegram("sendVoice", JSON.stringify({
-			"chat_id": message.from.id,
-			"voice": message.audio.file_id,
+			"chat_id": message.chat.id,
+			"voice": {
+				"duration": message.audio.duration,
+				"mime_type": message.audio.mime_type,
+				"file_id": message.audio.file_id,
+				"file_size": message.audio.file_size,
+			},
 		})).then(console.log); // XXX
 	} else {
 		console.log("3:"); // XXX
 		apiTelegram("sendMessage", JSON.stringify({
-			"chat_id": message.from.id,
+			"chat_id": message.chat.id,
 			"text": IDK_MSG,
 		})).then(console.log); // XXX
 	}
