@@ -1,0 +1,9 @@
+{
+    "name": "voicemusic",
+    "version": "1.0.0",
+    "description": "Telegram bot for converting music files to voice messages",
+    "main": "server.js",
+    "author": "Alexander Akhundzhanov",
+    "license": "MIT",
+    "dependencies": {}
+}
